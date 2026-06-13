@@ -5,13 +5,16 @@ from fastapi import UploadFile
 from fastapi import HTTPException
 from app.services.pdf_service import extract_text_from_pdf
 from app.models.resume import ResumeExtractionResponse
+from app.services.gemini_service import (
+    extract_resume_structure
+)
 router = APIRouter(
     prefix="/api",
     tags=["Upload"]
 )
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
-@router.post("/upload", response_model=ResumeExtractionResponse)
+@router.post("/upload")
 async def upload_resume(
     resume: UploadFile = File(...)
 ):
@@ -33,7 +36,9 @@ async def upload_resume(
         status_code=400,
         detail="Could not extract text from PDF"
     )
-    return {
-        "filename": resume.filename,
-        "text": extracted_text[:2000]
-    }
+    structured_resume = (
+    extract_resume_structure(
+        extracted_text
+    )
+)
+    return structured_resume
