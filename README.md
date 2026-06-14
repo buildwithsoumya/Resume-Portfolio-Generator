@@ -44,7 +44,7 @@ FolioSnap is a full-stack application that allows users to upload their resume, 
 * Instant portfolio preview inside the application
 * No manual setup required
 
-### ⬇ Download Portfolio
+###  Download Portfolio
 
 * Download generated portfolio as a standalone HTML file
 * Share or host anywhere
