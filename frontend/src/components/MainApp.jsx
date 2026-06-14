@@ -4,7 +4,7 @@ import ResumeUpload from './ResumeUpload';
 import StyleSelector from './StyleSelector';
 import GenerationProgress from './GenerationProgress';
 import ErrorCard from './ErrorCard';
-import { generatePortfolio } from '../lib/api';
+import { generatePortfolio } from '../services/api';
 
 const TRUST_BADGES = [
   { Icon: FileText, label: 'PDF Upload' },
@@ -35,8 +35,12 @@ export default function MainApp({ onPortfolioReady }) {
   };
 
   const handleGenerate = async () => {
-    if (!canGenerate) return;
+    if (!file)  { setFileError('Please upload a PDF resume before generating.'); return; }
+    if (!style) { setError({ type: 'generation_failed', message: 'Please select a portfolio style.' }); return; }
+    if (isGenerating) return;
+
     setError(null);
+    setFileError(null);
     setIsGenerating(true);
     setUploadProgress(0);
 
@@ -45,12 +49,20 @@ export default function MainApp({ onPortfolioReady }) {
       onPortfolioReady({ html: result.html, file, style });
     } catch (err) {
       const status = err?.response?.status;
-      if (status === 415 || status === 400) {
-        setError({ type: 'invalid_pdf', message: err?.response?.data?.message });
-      } else if (!err?.response) {
-        setError({ type: 'upload_failed' });
+      const serverMsg = err?.response?.data?.detail || err?.response?.data?.message;
+
+      if (!err?.response) {
+        // Network error — backend unreachable or CORS
+        setError({ type: 'upload_failed', message: 'Cannot reach the server. Make sure the backend is running.' });
+      } else if (status === 400 || status === 415 || status === 422) {
+        // Bad request — likely invalid file type or missing fields
+        setError({ type: 'invalid_pdf', message: serverMsg || 'The file or request was rejected by the server.' });
+      } else if (status >= 500) {
+        // Backend/AI error
+        setError({ type: 'generation_failed', message: serverMsg || 'The server encountered an error. Please try again.' });
       } else {
-        setError({ type: 'generation_failed', message: err?.response?.data?.message });
+        // Our own response-validation error or unexpected status
+        setError({ type: 'generation_failed', message: err?.message || 'An unexpected error occurred.' });
       }
     } finally {
       setIsGenerating(false);
