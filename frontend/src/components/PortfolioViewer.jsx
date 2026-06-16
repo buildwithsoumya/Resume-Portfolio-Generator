@@ -11,7 +11,7 @@ const STYLE_META = {
   'modern-startup': { label: 'Modern Startup', Icon: Rocket,  accent: '#ea580c' },
 };
 
-export default function PortfolioViewer({ file, style, html, onReset }) {
+export default function PortfolioViewer({ file, style, html, onReset, onEdit }) {
   const iframeRef = useRef(null);
   const meta = STYLE_META[style] || STYLE_META.developer;
   const { label, Icon, accent } = meta;
@@ -148,9 +148,21 @@ export default function PortfolioViewer({ file, style, html, onReset }) {
             Download HTML
           </button>
 
+          {onEdit && (
+            <button
+              id="edit-portfolio-btn"
+              className="btn-secondary"
+              onClick={onEdit}
+              style={{ width: '100%', justifyContent: 'center' }}
+            >
+              <Code2 size={15} strokeWidth={2} />
+              Edit Portfolio
+            </button>
+          )}
+
           <button
             id="open-new-tab-btn"
-            className="btn-secondary"
+            className="btn-ghost"
             onClick={handleOpenNewTab}
             style={{ width: '100%', justifyContent: 'center' }}
           >

@@ -51,7 +51,12 @@ class PortfolioResponse(BaseModel):
     user_id: int
     style: str
     html_content: str
+    original_html: Optional[str] = None
+    edited_html: Optional[str] = None
+    quality_score: Optional[int] = None
+    portfolio_type: Optional[str] = None
     created_at: datetime
+    updated_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
 
@@ -61,6 +66,12 @@ class PortfolioSummary(BaseModel):
     id: int
     user_id: int
     style: str
+    quality_score: Optional[int] = None
+    portfolio_type: Optional[str] = None
     created_at: datetime
+    updated_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
+
+class PortfolioUpdateRequest(BaseModel):
+    edited_html: str

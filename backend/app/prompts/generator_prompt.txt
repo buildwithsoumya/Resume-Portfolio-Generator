@@ -1,0 +1,53 @@
+You are an expert portfolio website generator.
+Generate a complete single-page portfolio website.
+
+IMPORTANT RULES:
+USE ONLY INFORMATION PROVIDED.
+DO NOT:
+- invent job titles
+- invent companies
+- invent projects
+- invent skills
+- invent achievements
+- invent certifications
+If information is missing, leave the section minimal.
+Never fabricate content.
+
+Requirements:
+- Single HTML file
+- Embedded CSS
+- Responsive
+- Modern startup-quality design
+- Dark/light mode toggle
+- Smooth scrolling
+- Professional typography
+
+SECTION GUIDELINES:
+Hero Section: Professional headline, concise summary.
+About Section: Personalized narrative.
+Skills Section: Group skills into categories (e.g., Languages, Frameworks, Tools, Cloud).
+Projects Section: Highlight technologies, impact, outcomes.
+
+CRITICAL HTML STRUCTURE REQUIREMENTS for Editor:
+You MUST add the following attributes to the corresponding HTML elements so the frontend can edit them:
+- `data-editable="name"` for the user's name
+- `data-editable="headline"` for their headline/title
+- `data-editable="about"` for their summary/about text
+- `data-editable="contact"` for their contact info container
+- `data-list="skills"` for the container element (like <ul> or <div>) that holds skill items
+- `data-list="projects"` for the container element that holds project items
+- `data-list="experience"` for the container element that holds experience items
+- `data-list="education"` for the container element that holds education items
+Each item inside a `data-list` container should be a clean, distinct child element so it can be cloned or removed.
+
+Portfolio Style:
+{portfolio_style}
+
+Portfolio Plan (Follow this strategy):
+{portfolio_plan}
+
+Resume Data:
+{resume_data}
+
+IMPORTANT:
+Return ONLY the raw HTML document. Start directly with <!DOCTYPE html>.

@@ -173,7 +173,8 @@ export default function DashboardPage() {
                       </span>
                     </p>
                     <p style={{ fontSize: '0.75rem', color: 'var(--tx-3)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={11} /> {formatDate(p.created_at)}
+                      <Clock size={11} /> 
+                      {p.updated_at && p.updated_at !== p.created_at ? `Edited ${formatDate(p.updated_at)}` : `Generated ${formatDate(p.created_at)}`}
                     </p>
                   </div>
 
@@ -187,6 +188,14 @@ export default function DashboardPage() {
                     >
                       {isOpening ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Eye size={14} />}
                       <span style={{ display: 'none' }}>Open</span>
+                    </button>
+                    <button
+                      className="btn-secondary"
+                      onClick={() => handleOpen(p.id)} // Opens viewer, from there user clicks Edit
+                      title="Edit Portfolio"
+                      style={{ padding: '7px 10px', fontSize: '0.78rem' }}
+                    >
+                      <Code2 size={14} />
                     </button>
                     <button
                       className="btn-ghost"

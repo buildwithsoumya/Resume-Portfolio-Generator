@@ -68,6 +68,17 @@ export const fetchPortfolioById = async (id) => {
 };
 
 /**
+ * Update an existing portfolio with new edited HTML.
+ * @param {number} id 
+ * @param {string} edited_html 
+ * @returns {Promise<Object>}
+ */
+export const updatePortfolio = async (id, edited_html) => {
+  const { data } = await apiClient.put(`/portfolios/${id}`, { edited_html });
+  return data;
+};
+
+/**
  * Delete a portfolio by id.
  * @param {number} id
  */

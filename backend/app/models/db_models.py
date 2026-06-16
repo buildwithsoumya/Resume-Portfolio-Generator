@@ -22,7 +22,12 @@ class Portfolio(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     style = Column(String(50), nullable=False)
-    html_content = Column(Text, nullable=False)
+    html_content = Column(Text, nullable=False)  # Current active HTML (either original or edited)
+    original_html = Column(Text, nullable=True)
+    edited_html = Column(Text, nullable=True)
+    quality_score = Column(Integer, nullable=True)
+    portfolio_type = Column(String(50), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     owner = relationship("User", back_populates="portfolios")

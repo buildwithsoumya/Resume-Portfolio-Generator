@@ -7,8 +7,11 @@ from jose import JWTError
 from app.database import get_db
 from app.models.db_models import Portfolio, User
 from app.services.pdf_service import extract_text_from_pdf
-from app.services.gemini_service import extract_resume_structure
+from app.services.gemini_service import extract_resume_structure, enhance_resume_content
+from app.services.resume_validator import validate_resume
+from app.services.portfolio_planner import generate_portfolio_plan
 from app.services.portfolio_service import generate_portfolio_html
+from app.services.quality_checker import check_portfolio_quality
 from app.utils.auth import decode_access_token
 
 router = APIRouter(prefix="/api", tags=["Portfolio"])
@@ -51,7 +54,26 @@ async def generate_portfolio(
 
     try:
         structured_resume = extract_resume_structure(text)
-        html = generate_portfolio_html(structured_resume, style)
+        
+        # Validate
+        validation_report = validate_resume(structured_resume)
+        
+        # Enhance content
+        enhanced_resume = enhance_resume_content(structured_resume)
+        
+        # Plan portfolio
+        portfolio_plan = generate_portfolio_plan(enhanced_resume)
+        
+        html = ""
+        quality_info = {}
+        
+        # Generation with retry based on quality
+        for attempt in range(2):
+            html = generate_portfolio_html(enhanced_resume, style, portfolio_plan)
+            quality_info = check_portfolio_quality(html, enhanced_resume)
+            if quality_info.get("is_acceptable", False):
+                break
+                
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -62,6 +84,9 @@ async def generate_portfolio(
             user_id=current_user.id,
             style=style,
             html_content=html,
+            original_html=html,
+            quality_score=quality_info.get("quality_score", 0),
+            portfolio_type=portfolio_plan.get("portfolio_type", "Unknown")
         )
         db.add(portfolio)
         db.commit()
