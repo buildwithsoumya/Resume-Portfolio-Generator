@@ -2,9 +2,16 @@ import os
 import json
 from pathlib import Path
 from google import genai
+from google.genai import errors
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+@retry(
+    stop=stop_after_attempt(4),
+    wait=wait_exponential(multiplier=1.5, min=2, max=15),
+    retry=retry_if_exception_type(errors.APIError)
+)
 def generate_portfolio_html(resume_data: dict, portfolio_style: str, portfolio_plan: dict) -> str:
     prompt_path = Path(__file__).parent.parent / "prompts" / "generator_prompt.txt"
     with open(prompt_path, "r", encoding="utf-8") as f:

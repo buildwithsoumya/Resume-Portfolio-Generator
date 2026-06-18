@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Zap, Mail, Lock, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -25,9 +24,9 @@ export default function LoginPage() {
       if (err?.response?.status === 401) {
         setError('Incorrect email or password.');
       } else if (!err?.response) {
-        setError('Cannot reach the server. Is the backend running?');
+        setError('Cannot reach the server.');
       } else {
-        setError(detail || 'Login failed. Please try again.');
+        setError(detail || 'Login failed.');
       }
     } finally {
       setIsLoading(false);
@@ -35,124 +34,56 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        {/* Logo */}
-        <div style={styles.logo}>
-          <div style={styles.logoIcon}><Zap size={18} color="white" strokeWidth={2.5} /></div>
-          <span style={styles.logoText}>FolioSnap</span>
-        </div>
-
-        <h1 style={styles.heading}>Welcome back</h1>
-        <p style={styles.subheading}>Sign in to your account to continue</p>
+    <div className="flex-grow flex items-center justify-center p-6 bg-background">
+      <div className="w-full max-w-sm bg-surface border border-border rounded-xl p-8 shadow-sm">
+        <h1 className="text-2xl font-bold text-text-main mb-2 text-center">Sign In</h1>
+        <p className="text-text-muted text-center mb-6">Welcome back to FolioSnap</p>
 
         {error && (
-          <div style={styles.errorBox}>
-            <AlertCircle size={15} color="#dc2626" />
-            <span>{error}</span>
+          <div className="bg-red-50 border border-red-100 text-red-600 p-3 rounded-md mb-4 text-sm">
+            {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={styles.form} noValidate>
-          <div style={styles.field}>
-            <label style={styles.label} htmlFor="login-email">Email</label>
-            <div style={styles.inputWrap}>
-              <Mail size={15} color="var(--tx-3)" style={styles.inputIcon} />
-              <input
-                id="login-email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                style={styles.input}
-                autoComplete="email"
-                required
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+          <div>
+            <label className="block text-sm font-medium text-text-main mb-1" htmlFor="login-email">Email</label>
+            <input
+              id="login-email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full bg-surface border border-border rounded-md px-3 py-2 text-text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              required
+            />
           </div>
 
-          <div style={styles.field}>
-            <label style={styles.label} htmlFor="login-password">Password</label>
-            <div style={styles.inputWrap}>
-              <Lock size={15} color="var(--tx-3)" style={styles.inputIcon} />
-              <input
-                id="login-password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                style={styles.input}
-                autoComplete="current-password"
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-text-main mb-1" htmlFor="login-password">Password</label>
+            <input
+              id="login-password"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full bg-surface border border-border rounded-md px-3 py-2 text-text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              required
+            />
           </div>
 
           <button
-            id="login-submit-btn"
             type="submit"
-            className="btn-primary"
             disabled={isLoading}
-            style={{ width: '100%', justifyContent: 'center', padding: '11px', fontSize: '0.9rem', borderRadius: '9px' }}
+            className="mt-2 bg-primary text-white w-full py-2 rounded-md font-medium hover:bg-primary-hover transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {isLoading ? <><span className="spinner" />Signing In…</> : 'Sign In'}
+            {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        <p style={styles.footer}>
+        <p className="text-center text-sm text-text-muted mt-6">
           Don't have an account?{' '}
-          <Link to="/register" style={styles.link}>Create one</Link>
+          <Link to="/register" className="text-primary hover:underline">Sign up</Link>
         </p>
       </div>
     </div>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '24px',
-    background: 'var(--bg-1)',
-  },
-  card: {
-    width: '100%',
-    maxWidth: '420px',
-    background: 'var(--bg-0)',
-    border: '1px solid var(--bd)',
-    borderRadius: '14px',
-    padding: '36px 32px',
-    boxShadow: 'var(--sh-lg)',
-  },
-  logo: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '28px' },
-  logoIcon: {
-    width: '32px', height: '32px', background: 'var(--acc)',
-    borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-  },
-  logoText: { fontWeight: 700, fontSize: '1.1rem', color: 'var(--tx-1)', letterSpacing: '-0.03em' },
-  heading: { fontSize: '1.45rem', fontWeight: 800, color: 'var(--tx-1)', letterSpacing: '-0.03em', marginBottom: '6px' },
-  subheading: { fontSize: '0.85rem', color: 'var(--tx-3)', marginBottom: '24px' },
-  errorBox: {
-    display: 'flex', alignItems: 'center', gap: '8px',
-    background: 'rgba(220,38,38,.06)', border: '1px solid rgba(220,38,38,.2)',
-    borderRadius: '8px', padding: '10px 12px', marginBottom: '18px',
-    fontSize: '0.82rem', color: '#dc2626',
-  },
-  form: { display: 'flex', flexDirection: 'column', gap: '16px' },
-  field: { display: 'flex', flexDirection: 'column', gap: '6px' },
-  label: { fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx-2)' },
-  inputWrap: { position: 'relative' },
-  inputIcon: { position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' },
-  input: {
-    width: '100%', boxSizing: 'border-box',
-    padding: '10px 12px 10px 34px',
-    background: 'var(--bg-1)', border: '1px solid var(--bd)',
-    borderRadius: '8px', fontSize: '0.875rem', color: 'var(--tx-1)',
-    outline: 'none', transition: 'border-color 0.15s ease',
-    fontFamily: 'inherit',
-  },
-  footer: { textAlign: 'center', fontSize: '0.82rem', color: 'var(--tx-3)', marginTop: '20px' },
-  link: { color: 'var(--acc)', fontWeight: 600, textDecoration: 'none' },
-};

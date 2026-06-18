@@ -14,17 +14,15 @@ import './index.css';
 
 function Layout({ children }) {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="min-h-screen flex flex-col bg-background text-text-main font-sans">
       <Navbar />
-      <main style={{ flex: 1 }}>{children}</main>
-      <footer style={{
-        borderTop: '1px solid var(--bd)',
-        padding: '14px 24px',
-        textAlign: 'center',
-        fontSize: '0.73rem',
-        color: 'var(--tx-3)',
-      }}>
-        © {new Date().getFullYear()} FolioSnap — AI-Powered Portfolio Generator
+      <main className="flex-grow flex flex-col w-full">
+        {children}
+      </main>
+      <footer className="w-full py-6 px-6 border-t border-border bg-surface text-center mt-auto">
+        <p className="text-sm text-text-muted">
+          © {new Date().getFullYear()} FolioSnap. All rights reserved.
+        </p>
       </footer>
     </div>
   );
@@ -37,7 +35,7 @@ export default function App() {
         <AuthProvider>
           <Routes>
             {/* Public */}
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<Layout><LandingPage /></Layout>} />
             <Route path="/login"    element={<Layout><LoginPage /></Layout>} />
             <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
 

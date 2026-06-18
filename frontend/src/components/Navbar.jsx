@@ -1,10 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Zap, Sun, Moon, LayoutDashboard, Sparkles, FolderOpen, LogOut, LogIn, UserPlus } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
-  const { theme, toggle } = useTheme();
   const { isAuthenticated, currentUser, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -14,89 +11,57 @@ export default function Navbar() {
   };
 
   return (
-    <header style={{
-      background: 'var(--bg-0)',
-      borderBottom: '1px solid var(--bd)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-    }}>
-      <div style={{
-        maxWidth: '1280px',
-        margin: '0 auto',
-        padding: '0 24px',
-        height: '56px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}>
-        {/* Logo */}
-        <Link to={isAuthenticated ? '/dashboard' : '/'} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '30px', height: '30px', background: 'var(--acc)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Zap size={16} color="white" strokeWidth={2.5} />
-          </div>
-          <span style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--tx-1)', letterSpacing: '-0.03em' }}>FolioSnap</span>
-          <span style={{ background: 'var(--acc-light)', border: '1px solid var(--acc-bd)', color: 'var(--acc)', borderRadius: '4px', padding: '2px 7px', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-            Beta
-          </span>
-        </Link>
+    <header className="w-full bg-surface border-b border-border sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+        <div className="flex items-center gap-8">
+          <Link to={isAuthenticated ? '/dashboard' : '/'} className="font-bold text-lg text-text-main">
+            FolioSnap
+          </Link>
+          
+          <nav className="hidden md:flex gap-6">
+            {isAuthenticated && (
+              <>
+                <Link to="/dashboard" className="text-text-muted hover:text-primary transition-colors">
+                  Dashboard
+                </Link>
+                <Link to="/generate" className="text-text-muted hover:text-primary transition-colors">
+                  Generate
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
 
-        {/* Right nav */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" style={{ textDecoration: 'none' }}>
-                <button className="btn-ghost" style={{ fontSize: '0.83rem', gap: '5px' }}>
-                  <LayoutDashboard size={15} strokeWidth={2} />
-                  <span style={{ display: 'none' }}>Dashboard</span>
-                </button>
-              </Link>
-              <Link to="/generate" style={{ textDecoration: 'none' }}>
-                <button className="btn-ghost" style={{ fontSize: '0.83rem' }}>
-                  <Sparkles size={15} strokeWidth={2} />
-                  Generate
-                </button>
-              </Link>
-              <div style={{ width: '1px', height: '20px', background: 'var(--bd)', margin: '0 4px' }} />
-              <span style={{ fontSize: '0.78rem', color: 'var(--tx-3)', padding: '0 4px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span className="text-sm text-text-muted hidden sm:block">
                 {currentUser?.name}
               </span>
-              <button
-                id="logout-btn"
-                className="btn-ghost"
-                onClick={handleLogout}
-                title="Sign out"
-                style={{ padding: '7px 9px', color: 'var(--tx-3)' }}
+              <button 
+                onClick={handleLogout} 
+                className="text-sm text-text-muted hover:text-text-main transition-colors"
               >
-                <LogOut size={15} strokeWidth={2} />
+                Logout
               </button>
+              <Link to="/generate">
+                <button className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors">
+                  Create Portfolio
+                </button>
+              </Link>
             </>
           ) : (
             <>
-              <Link to="/login" style={{ textDecoration: 'none' }}>
-                <button className="btn-ghost" style={{ fontSize: '0.83rem' }}>
-                  <LogIn size={15} strokeWidth={2} /> Sign In
-                </button>
+              <Link to="/login" className="text-sm text-text-muted hover:text-text-main transition-colors">
+                Sign In
               </Link>
-              <Link to="/register" style={{ textDecoration: 'none' }}>
-                <button className="btn-primary" style={{ fontSize: '0.83rem', padding: '7px 14px' }}>
-                  <UserPlus size={14} strokeWidth={2} /> Sign Up
+              <Link to="/register">
+                <button className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors">
+                  Get Started
                 </button>
               </Link>
             </>
           )}
-
-          <div style={{ width: '1px', height: '20px', background: 'var(--bd)', margin: '0 4px' }} />
-
-          <button
-            id="theme-toggle"
-            className="btn-ghost"
-            onClick={toggle}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            style={{ padding: '7px 10px' }}
-          >
-            {theme === 'dark' ? <Sun size={17} strokeWidth={2} /> : <Moon size={17} strokeWidth={2} />}
-          </button>
         </div>
       </div>
     </header>

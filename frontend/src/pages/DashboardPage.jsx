@@ -2,16 +2,12 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchPortfolios, fetchPortfolioById, deletePortfolio } from '../services/api';
-import {
-  Sparkles, FolderOpen, Trash2, Download, Eye,
-  Code2, Briefcase, Palette, Rocket, Clock, AlertCircle, Loader2,
-} from 'lucide-react';
 
 const STYLE_META = {
-  developer:        { label: 'Developer',      Icon: Code2,     accent: '#2563eb' },
-  corporate:        { label: 'Corporate',      Icon: Briefcase, accent: '#0f766e' },
-  creative:         { label: 'Creative',       Icon: Palette,   accent: '#7c3aed' },
-  'modern-startup': { label: 'Modern Startup', Icon: Rocket,    accent: '#ea580c' },
+  developer:        { label: 'Developer' },
+  corporate:        { label: 'Corporate' },
+  creative:         { label: 'Creative' },
+  'modern-startup': { label: 'Modern Startup' },
 };
 
 function formatDate(iso) {
@@ -31,7 +27,7 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchPortfolios()
       .then(setPortfolios)
-      .catch(() => setListError('Failed to load your portfolios. Please refresh.'))
+      .catch(() => setListError('Failed to load your portfolios.'))
       .finally(() => setLoadingList(false));
   }, []);
 
@@ -42,7 +38,7 @@ export default function DashboardPage() {
       await deletePortfolio(id);
       setPortfolios(prev => prev.filter(p => p.id !== id));
     } catch {
-      alert('Failed to delete portfolio. Please try again.');
+      alert('Failed to delete portfolio.');
     } finally {
       setDeletingId(null);
     }
@@ -52,10 +48,9 @@ export default function DashboardPage() {
     setOpeningId(id);
     try {
       const portfolio = await fetchPortfolioById(id);
-      // Navigate to viewer passing data via state
       navigate('/generate', { state: { preloaded: portfolio } });
     } catch {
-      alert('Failed to load portfolio. Please try again.');
+      alert('Failed to load portfolio.');
     } finally {
       setOpeningId(null);
     }
@@ -77,150 +72,95 @@ export default function DashboardPage() {
   };
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 24px' }}>
-      {/* Welcome */}
-      <div style={{ marginBottom: '36px' }}>
-        <p style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--acc)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px' }}>
-          Dashboard
-        </p>
-        <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--tx-1)', letterSpacing: '-0.03em', marginBottom: '6px' }}>
-          Welcome back, {currentUser?.name?.split(' ')[0]} 👋
-        </h1>
-        <p style={{ fontSize: '0.9rem', color: 'var(--tx-3)' }}>
-          {portfolios.length > 0
-            ? `You have ${portfolios.length} portfolio${portfolios.length > 1 ? 's' : ''} generated.`
-            : 'Generate your first portfolio to get started.'}
-        </p>
-      </div>
-
-      {/* Quick Actions */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '40px' }}>
-        <Link to="/generate" style={{ textDecoration: 'none' }}>
-          <div className="card card-hover" style={{ padding: '20px', cursor: 'pointer' }}>
-            <div style={{ width: '38px', height: '38px', background: 'var(--acc-light)', border: '1px solid var(--acc-bd)', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-              <Sparkles size={18} color="var(--acc)" strokeWidth={2} />
-            </div>
-            <p style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--tx-1)', marginBottom: '3px' }}>Generate Portfolio</p>
-            <p style={{ fontSize: '0.78rem', color: 'var(--tx-3)' }}>Upload a resume and create a new portfolio</p>
-          </div>
-        </Link>
-
-        <div className="card" style={{ padding: '20px' }}>
-          <div style={{ width: '38px', height: '38px', background: 'rgba(22,163,74,.1)', border: '1px solid rgba(22,163,74,.2)', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-            <FolderOpen size={18} color="#16a34a" strokeWidth={2} />
-          </div>
-          <p style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--tx-1)', marginBottom: '3px' }}>My Portfolios</p>
-          <p style={{ fontSize: '0.78rem', color: 'var(--tx-3)' }}>{portfolios.length} portfolio{portfolios.length !== 1 ? 's' : ''} saved</p>
+    <div className="max-w-7xl mx-auto w-full px-6 py-12">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-text-main mb-2">My Portfolios</h1>
+          <p className="text-text-muted">Manage your generated portfolio websites.</p>
         </div>
+        <Link to="/generate">
+          <button className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary-hover transition-colors">
+            Create New
+          </button>
+        </Link>
       </div>
 
-      {/* Portfolio History */}
-      <div>
-        <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--tx-1)', marginBottom: '16px', letterSpacing: '-0.02em' }}>
-          Portfolio History
-        </h2>
+      {loadingList && <div className="text-text-muted">Loading portfolios...</div>}
+      
+      {listError && (
+        <div className="bg-red-50 text-red-600 p-4 rounded-md border border-red-100 mb-6">
+          {listError}
+        </div>
+      )}
 
-        {loadingList && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--tx-3)', padding: '24px 0' }}>
-            <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
-            <span style={{ fontSize: '0.875rem' }}>Loading portfolios…</span>
-          </div>
-        )}
+      {!loadingList && portfolios.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {portfolios.map(p => {
+            const meta = STYLE_META[p.style] || STYLE_META.developer;
+            const isDeleting = deletingId === p.id;
+            const isOpening = openingId === p.id;
 
-        {listError && (
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: 'rgba(220,38,38,.05)', border: '1px solid rgba(220,38,38,.2)', borderRadius: '10px', padding: '14px 16px', fontSize: '0.85rem', color: '#dc2626' }}>
-            <AlertCircle size={16} />
-            {listError}
-          </div>
-        )}
-
-        {!loadingList && !listError && portfolios.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '48px 24px', border: '1px dashed var(--bd)', borderRadius: '12px' }}>
-            <FolderOpen size={32} color="var(--tx-3)" strokeWidth={1.5} style={{ marginBottom: '12px' }} />
-            <p style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--tx-2)', marginBottom: '4px' }}>No portfolios yet</p>
-            <p style={{ fontSize: '0.8rem', color: 'var(--tx-3)', marginBottom: '16px' }}>Generate your first portfolio to see it here</p>
-            <Link to="/generate">
-              <button className="btn-primary" style={{ fontSize: '0.83rem', padding: '8px 16px' }}>
-                <Sparkles size={14} /> Generate Now
-              </button>
-            </Link>
-          </div>
-        )}
-
-        {!loadingList && portfolios.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {portfolios.map((p) => {
-              const meta = STYLE_META[p.style] || STYLE_META.developer;
-              const { label, Icon, accent } = meta;
-              const isDeleting = deletingId === p.id;
-              const isOpening  = openingId  === p.id;
-
-              return (
-                <div
-                  key={p.id}
-                  className="card"
-                  style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px' }}
-                >
-                  <div style={{ width: '38px', height: '38px', background: `${accent}15`, borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Icon size={17} color={accent} strokeWidth={1.8} />
-                  </div>
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--tx-1)', marginBottom: '2px' }}>
-                      {label} Portfolio
-                      <span style={{ marginLeft: '8px', fontSize: '0.7rem', fontWeight: 500, background: 'var(--bg-2)', border: '1px solid var(--bd)', borderRadius: '4px', padding: '1px 6px', color: 'var(--tx-3)' }}>
-                        #{p.id}
-                      </span>
-                    </p>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--tx-3)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={11} /> 
-                      {p.updated_at && p.updated_at !== p.created_at ? `Edited ${formatDate(p.updated_at)}` : `Generated ${formatDate(p.created_at)}`}
-                    </p>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                    <button
-                      className="btn-ghost"
-                      onClick={() => handleOpen(p.id)}
+            return (
+              <div key={p.id} className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col">
+                <div className="bg-background border-b border-border p-6 h-32 flex items-center justify-center">
+                   <span className="text-text-muted font-medium">{meta.label} Style</span>
+                </div>
+                
+                <div className="p-6 flex flex-col flex-grow">
+                  <h3 className="text-lg font-bold text-text-main mb-1">Portfolio #{p.id}</h3>
+                  <p className="text-sm text-text-muted mb-6">
+                    Created {formatDate(p.created_at)}
+                  </p>
+                  
+                  <div className="mt-auto flex gap-3">
+                    <button 
+                      onClick={() => window.open(`/api/portfolios/${p.id}/html`, '_blank')}
+                      className="flex-1 bg-surface border border-border text-text-main py-2 rounded-md hover:bg-background transition-colors text-sm font-medium"
+                    >
+                      Preview
+                    </button>
+                    <button 
+                      onClick={() => handleOpen(p.id)} 
                       disabled={isOpening}
-                      title="Open in viewer"
-                      style={{ padding: '7px 10px', fontSize: '0.78rem' }}
+                      className="flex-1 bg-primary text-white py-2 rounded-md hover:bg-primary-hover transition-colors text-sm font-medium"
                     >
-                      {isOpening ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Eye size={14} />}
-                      <span style={{ display: 'none' }}>Open</span>
+                      {isOpening ? 'Loading...' : 'Edit'}
                     </button>
-                    <button
-                      className="btn-secondary"
-                      onClick={() => handleOpen(p.id)} // Opens viewer, from there user clicks Edit
-                      title="Edit Portfolio"
-                      style={{ padding: '7px 10px', fontSize: '0.78rem' }}
-                    >
-                      <Code2 size={14} />
-                    </button>
-                    <button
-                      className="btn-ghost"
+                  </div>
+                  
+                  <div className="flex gap-3 mt-3">
+                    <button 
                       onClick={() => handleDownload(p.id, p.style)}
-                      title="Download HTML"
-                      style={{ padding: '7px 10px', fontSize: '0.78rem' }}
+                      className="flex-1 text-primary hover:text-primary-hover py-2 text-sm font-medium transition-colors"
                     >
-                      <Download size={14} />
+                      Download
                     </button>
-                    <button
-                      className="btn-ghost"
-                      onClick={() => handleDelete(p.id)}
+                    <button 
+                      onClick={() => handleDelete(p.id)} 
                       disabled={isDeleting}
-                      title="Delete"
-                      style={{ padding: '7px 10px', color: isDeleting ? 'var(--tx-3)' : '#dc2626' }}
+                      className="flex-1 text-red-600 hover:text-red-700 py-2 text-sm font-medium transition-colors"
                     >
-                      {isDeleting ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Trash2 size={14} />}
+                      Delete
                     </button>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {!loadingList && !listError && portfolios.length === 0 && (
+        <div className="text-center py-20 bg-surface border border-border rounded-xl shadow-sm">
+          <h2 className="text-xl font-bold text-text-main mb-2">No portfolios yet</h2>
+          <p className="text-text-muted mb-6">You haven't generated any portfolios yet.</p>
+          <Link to="/generate">
+            <button className="bg-primary text-white px-6 py-2 rounded-md font-medium hover:bg-primary-hover transition-colors">
+              Create Your First Portfolio
+            </button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
