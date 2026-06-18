@@ -8,18 +8,14 @@ FolioSnap is a full-stack application that allows users to upload their resume, 
 
 ##  Features
 
-###  Resume Upload
+###  User Authentication & Dashboard
+* Secure JWT-based user authentication
+* Personal dashboard to manage, preview, edit, and delete generated portfolios
+* Portfolio history is safely stored and easily accessible
 
-* Upload resumes in PDF format
-* Drag-and-drop support
-* File validation and error handling
-
-###  Resume Analysis
-
-* Extracts text from PDFs using PyMuPDF
-* Parses resume content using Google's Gemini AI
-* Identifies:
-
+###  Resume Upload & Analysis
+* Upload resumes in PDF format with automatic text extraction via PyMuPDF
+* Advanced parsing of resume content using Google's Gemini AI to accurately identify:
   * Personal Information
   * Skills
   * Education
@@ -27,27 +23,22 @@ FolioSnap is a full-stack application that allows users to upload their resume, 
   * Experience
   * Contact Details
 
-###  Portfolio Generation
+###  AI Portfolio Generation
+* Multi-Provider Generation Engine:
+  * Powered primarily by **Meta Llama 3.3 70B** (via OpenRouter) for high-quality structured layouts.
+  * Automatic seamless fallback to **Google Gemini 2.5 Flash** with resilient rate-limit handling and exponential backoff retry logic.
+* Multiple portfolio styles:
+  * Developer (Technical, clean)
+  * Corporate (Professional, grid)
+  * Creative (Bold, artistic)
+  * Modern Startup (Fresh, dynamic)
 
-* AI-generated portfolio websites
-* Multiple portfolio styles
-
-  * Developer
-  * Corporate
-  * Creative
-  * Student
-* Responsive design
-* Dark/Light mode support
-
-###  Live Preview
-
+###  Live Preview & Editor
 * Instant portfolio preview inside the application
-* No manual setup required
+* **Live HTML Editor:** Modify the generated content, adjust styling, and refine AI outputs directly from the browser before downloading
 
 ###  Download Portfolio
-
-* Download generated portfolio as a standalone HTML file
-* Share or host anywhere
+* Download the finalized, customized portfolio as a standalone HTML file ready to be hosted anywhere
 
 ---
 
@@ -66,13 +57,13 @@ Gemini Resume Parsing
 Structured Resume JSON
     │
     ▼
-Gemini Portfolio Generation
+OpenRouter (Llama 3.3 70B) Generation [Fallback to Gemini]
     │
     ▼
-HTML Portfolio
+HTML Portfolio (Saved to SQLite DB)
     │
     ▼
-Live Preview + Download
+Live Preview + In-browser Live Editor + Download
 ```
 
 ---
@@ -80,54 +71,23 @@ Live Preview + Download
 ##  Tech Stack
 
 ### Frontend
-
 * React
 * Vite
-* Axios
-* Tailwind CSS
-* React Dropzone
+* React Router DOM (Navigation)
+* Tailwind CSS v4 (Clean, minimal, responsive styling)
+* Context API (State management)
 
 ### Backend
-
 * FastAPI
 * Python
-* PyMuPDF
+* SQLite + SQLAlchemy (Database & ORM)
+* PyMuPDF (PDF parsing)
 * Pydantic
+* Tenacity (Resilient API retries)
 
 ### AI
-
-* Google Gemini 2.5 Flash
-
-### Development Tools
-
-* Git
-* GitHub
-
----
-
-##  Project Structure
-
-```text
-Resume-Portfolio-Generator/
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   └── package.json
-│
-├── backend/
-│   ├── app/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── models/
-│   │   └── main.py
-│   │
-│   ├── uploads/
-│   ├── requirements.txt
-│   └── .env
-│
-└── README.md
-```
+* **OpenRouter API** (Meta Llama 3.3 70B Instruct)
+* **Google Gemini API** (Gemini 2.5 Flash)
 
 ---
 
@@ -137,7 +97,6 @@ Resume-Portfolio-Generator/
 
 ```bash
 git clone https://github.com/buildwithsoumya/Resume-Portfolio-Generator.git
-
 cd Resume-Portfolio-Generator
 ```
 
@@ -147,7 +106,6 @@ cd Resume-Portfolio-Generator
 
 ```bash
 cd backend
-
 python -m venv venv
 ```
 
@@ -176,7 +134,10 @@ pip install -r requirements.txt
 Create a `.env` file inside the backend directory:
 
 ```env
-GEMINI_API_KEY=YOUR_API_KEY
+GEMINI_API_KEY=your_gemini_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+LLM_PROVIDER=openrouter  # Set to 'gemini' to use Google Gemini only
+SECRET_KEY=your_secure_jwt_secret_key_here
 ```
 
 ### Run Backend
@@ -185,17 +146,8 @@ GEMINI_API_KEY=YOUR_API_KEY
 uvicorn app.main:app --reload
 ```
 
-Backend runs at:
-
-```text
-http://localhost:8000
-```
-
-Swagger Documentation:
-
-```text
-http://localhost:8000/docs
-```
+Backend runs at: `http://localhost:8000`
+Swagger Documentation: `http://localhost:8000/docs`
 
 ---
 
@@ -203,11 +155,10 @@ http://localhost:8000/docs
 
 ```bash
 cd frontend
-
 npm install
 ```
 
-Create a `.env` file:
+Create a `.env` file inside the frontend directory:
 
 ```env
 VITE_API_URL=http://localhost:8000
@@ -219,39 +170,21 @@ Run Frontend:
 npm run dev
 ```
 
-Frontend runs at:
-
-```text
-http://localhost:5173
-```
+Frontend runs at: `http://localhost:5173`
 
 ---
 
 ##  Usage
 
-1. Upload your resume PDF.
-2. Select a portfolio style.
-3. Click **Generate Portfolio**.
-4. Wait for AI processing.
-5. Preview the generated website.
-6. Download the HTML portfolio.
-
----
-
-##  Future Improvements
-
-* Portfolio editing before download
-* Multiple premium portfolio templates
-* User authentication
-* Portfolio history and storage
+1. Create an account or sign in.
+2. Upload your resume PDF and select a portfolio style.
+3. Click **Generate Portfolio** and wait for the AI to process it.
+4. Preview the generated website in the live viewer.
+5. Use the **Edit** feature to refine the text, tags, or links.
+6. Download the final HTML portfolio and share it with the world!
 
 ---
 
 ##  Contributing
 
-Contributions, suggestions, and feedback are welcome.
-
-Feel free to open issues and submit pull requests.
-
----
-
+Contributions, suggestions, and feedback are welcome. Feel free to open issues and submit pull requests.
