@@ -9,9 +9,13 @@ FolioSnap is a full-stack application that allows users to upload their resume, 
 ##  Features
 
 ###  User Authentication & Dashboard
-* Secure JWT-based user authentication
+* Secure JWT-based user authentication (First Name & Last Name integration)
 * Personal dashboard to manage, preview, edit, and delete generated portfolios
 * Portfolio history is safely stored and easily accessible
+
+###  Modern UI & UX
+* **Dark Mode & Light Mode** toggle support with persistent local storage
+* Premium **animated gradient background** integrated across the entire application
 
 ###  Resume Upload & Analysis
 * Upload resumes in PDF format with automatic text extraction via PyMuPDF
@@ -24,9 +28,7 @@ FolioSnap is a full-stack application that allows users to upload their resume, 
   * Contact Details
 
 ###  AI Portfolio Generation
-* Multi-Provider Generation Engine:
-  * Powered primarily by **Meta Llama 3.3 70B** (via OpenRouter) for high-quality structured layouts.
-  * Automatic seamless fallback to **Google Gemini 2.5 Flash** with resilient rate-limit handling and exponential backoff retry logic.
+* Powered entirely by **Google Gemini 2.5 Flash** with resilient rate-limit handling and exponential backoff retry logic.
 * Multiple portfolio styles:
   * Developer (Technical, clean)
   * Corporate (Professional, grid)
@@ -57,7 +59,7 @@ Gemini Resume Parsing
 Structured Resume JSON
     │
     ▼
-OpenRouter (Llama 3.3 70B) Generation [Fallback to Gemini]
+Gemini (2.5 Flash) Generation
     │
     ▼
 HTML Portfolio (Saved to SQLite DB)
@@ -86,7 +88,6 @@ Live Preview + In-browser Live Editor + Download
 * Tenacity (Resilient API retries)
 
 ### AI
-* **OpenRouter API** (Meta Llama 3.3 70B Instruct)
 * **Google Gemini API** (Gemini 2.5 Flash)
 
 ---
@@ -135,8 +136,6 @@ Create a `.env` file inside the backend directory:
 
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
-OPENROUTER_API_KEY=your_openrouter_api_key_here
-LLM_PROVIDER=openrouter  # Set to 'gemini' to use Google Gemini only
 SECRET_KEY=your_secure_jwt_secret_key_here
 ```
 
