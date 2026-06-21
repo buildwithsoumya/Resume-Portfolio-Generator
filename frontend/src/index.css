@@ -11,9 +11,24 @@
 }
 
 body {
-  background-color: var(--color-background);
+  background: linear-gradient(-45deg, var(--color-background), var(--color-surface), var(--color-border), var(--color-background));
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
   color: var(--color-text-main);
   font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Legacy variables mapping for old components */
@@ -34,4 +49,21 @@ body {
   --sh-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --sh-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --sh-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-text-main: #f8fafc;
+  --color-text-muted: #94a3b8;
+  --color-border: #334155;
+  
+  --bg-0: var(--color-surface);
+  --bg-1: var(--color-background);
+  --bg-2: #1e293b;
+  --bg-3: #334155;
+  --bd: var(--color-border);
+  --tx-1: var(--color-text-main);
+  --tx-2: #e2e8f0;
+  --tx-3: var(--color-text-muted);
 }

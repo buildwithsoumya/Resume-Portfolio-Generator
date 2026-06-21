@@ -6,7 +6,8 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const [name, setName]         = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName]   = useState('');
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
@@ -14,11 +15,12 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !password) { setError('Please fill in all fields.'); return; }
+    if (!firstName || !lastName || !email || !password) { setError('Please fill in all fields.'); return; }
     setError('');
     setIsLoading(true);
     try {
-      await register(name, email, password);
+      const fullName = `${firstName} ${lastName}`.trim();
+      await register(fullName, email, password);
       navigate('/dashboard');
     } catch (err) {
       const detail = err?.response?.data?.detail;
@@ -35,7 +37,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex-grow flex items-center justify-center p-6 bg-background">
+    <div className="flex-grow flex items-center justify-center p-6 bg-transparent">
       <div className="w-full max-w-sm bg-surface border border-border rounded-xl p-8 shadow-sm">
         <h1 className="text-2xl font-bold text-text-main mb-2 text-center">Create Account</h1>
         <p className="text-text-muted text-center mb-6">Join FolioSnap to build your portfolio</p>
@@ -47,16 +49,29 @@ export default function RegisterPage() {
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-          <div>
-            <label className="block text-sm font-medium text-text-main mb-1" htmlFor="register-name">Full Name</label>
-            <input
-              id="register-name"
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className="w-full bg-surface border border-border rounded-md px-3 py-2 text-text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              required
-            />
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-text-main mb-1" htmlFor="register-firstName">First Name</label>
+              <input
+                id="register-firstName"
+                type="text"
+                value={firstName}
+                onChange={e => setFirstName(e.target.value)}
+                className="w-full bg-surface border border-border rounded-md px-3 py-2 text-text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                required
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-text-main mb-1" htmlFor="register-lastName">Last Name</label>
+              <input
+                id="register-lastName"
+                type="text"
+                value={lastName}
+                onChange={e => setLastName(e.target.value)}
+                className="w-full bg-surface border border-border rounded-md px-3 py-2 text-text-main outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                required
+              />
+            </div>
           </div>
 
           <div>
