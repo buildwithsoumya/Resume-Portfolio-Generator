@@ -10,7 +10,7 @@ from app.services.pdf_service import extract_text_from_pdf
 from app.services.gemini_service import extract_resume_structure, enhance_resume_content
 from app.services.resume_validator import validate_resume
 from app.services.portfolio_planner import generate_portfolio_plan
-from app.services.llm_provider import generate_portfolio as generate_portfolio_content
+from app.services.portfolio_service import generate_portfolio_html as generate_portfolio_content
 from app.services.quality_checker import check_portfolio_quality
 from app.utils.auth import decode_access_token
 
@@ -101,11 +101,7 @@ async def generate_portfolio(
 
 @router.get("/models")
 async def get_models():
-    import os
-    provider = os.getenv("LLM_PROVIDER", "openrouter").lower()
-    model = os.getenv("PORTFOLIO_MODEL", "meta-llama/llama-3.3-70b-instruct:free") if provider == "openrouter" else "gemini-2.5-flash"
-    
     return {
-        "provider": provider,
-        "model": model
+        "provider": "gemini",
+        "model": "gemini-2.5-flash"
     }
